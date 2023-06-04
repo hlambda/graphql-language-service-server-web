@@ -3,6 +3,7 @@
 # Still todo
 
 ⦿ Add GraphQL tag definitions in LSP. (Refactor LSP code)
+⦿ Support git:/ files
 
 # Done
 

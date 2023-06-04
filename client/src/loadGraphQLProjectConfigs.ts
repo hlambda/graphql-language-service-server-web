@@ -11,7 +11,9 @@ import readWorkspaceFileContents from "./utils/readWorkspaceFileContents";
 
 import store from "./store";
 
-export const loadGraphQLProjectConfigs = async (): Promise<{
+export const loadGraphQLProjectConfigs = async (
+  isFirstStartup = false
+): Promise<{
   allProjectsFromAllWorkspaces: any;
   selectedProject: any;
 }> => {
@@ -46,9 +48,14 @@ export const loadGraphQLProjectConfigs = async (): Promise<{
         }
       }
 
-      const workspaceEnvironmentVariables = {
-        ...parseDotEnvContent(dotEnvFileText),
-      };
+      let workspaceEnvironmentVariables = {};
+      try {
+        workspaceEnvironmentVariables = {
+          ...parseDotEnvContent(dotEnvFileText ?? ""),
+        };
+      } catch (error) {
+        console.log(error);
+      }
 
       let experimentalProjectConfigContent: string | undefined;
 
@@ -120,7 +127,7 @@ export const loadGraphQLProjectConfigs = async (): Promise<{
               if (typeof valueOfTheKeyOfTheObject === "string") {
                 valueOfTheKeyOfTheObject = valueOfTheKeyOfTheObject.replace(
                   `{{${keyEnv}}}`,
-                  valueEnv
+                  `${valueEnv}`
                 );
               }
             }
@@ -167,7 +174,15 @@ export const loadGraphQLProjectConfigs = async (): Promise<{
   const findFirstDefaultProject = allProjectsFromAllWorkspaces.find(
     (o) => o?.default === true
   );
-  if (allProjectsFromAllWorkspaces.length === 1) {
+  if (allProjectsFromAllWorkspaces.length === 0) {
+    // Nothing to do here... no project are found.
+    if (!isFirstStartup) {
+      vscode.window.showInformationMessage(
+        "No project to select, please setup your projects in the GraphQL project config file."
+      );
+    }
+    return;
+  } else if (allProjectsFromAllWorkspaces.length === 1) {
     target.target = allProjectsFromAllWorkspaces[0];
   } else if (findFirstDefaultProject) {
     target.target = findFirstDefaultProject;
@@ -186,6 +201,11 @@ export const loadGraphQLProjectConfigs = async (): Promise<{
 
   const selectedProject = target?.target;
   if (!selectedProject) {
+    if (!isFirstStartup) {
+      vscode.window.showInformationMessage(
+        "No project was selected, please select project to continue."
+      );
+    }
     return;
   }
 

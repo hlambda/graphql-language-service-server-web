@@ -17,7 +17,7 @@ Important to note: This is not the official extension by [GraphQL Foundation](ht
 
 - GraphQL syntax highlighting
 - **GraphQL LSP server compatible with Web IDE**
-- **GraphQL Query/Mutation/Subscription Exec compatible with Web IDE**
+- **Get GraphQL Query/Mutation/Subscription execution results, compatible with Web IDE**
 
 ## Running
 
@@ -25,7 +25,7 @@ Create new file `graphql.config.experimental.json` in root of one of your vscode
 
 ! This is not the same configuration as graphql.config from `graphql-config` this is this extension exclusive config file. (Hopefuly once the `graphql-config` package implements web compatible version we can revert on using that.)
 
-Example structure:
+Example structure of `graphql.config.experimental.json` file:
 
 ```json
 {
@@ -33,9 +33,9 @@ Example structure:
     {
       "name": "Hasura API Multi Tenant Admin Dashboard",
       "default": true,
-      "url": "{{ADMIN_DASHBOARD_GRAPHQL_API_INTROSPECTION_URL}}",
+      "url": "{{MY_GRAPHQL_API_INTROSPECTION_URL}}",
       "headers": {
-        "x-hasura-admin-secret": "{{ADMIN_DASHBOARD_GRAPHQL_API_INTROSPECTION_HASURA_ADMIN_SECRET}}",
+        "x-hasura-admin-secret": "{{MY_GRAPHQL_API_INTROSPECTION_HASURA_ADMIN_SECRET}}",
         "Authorization": "Bearer ey..."
       }
     }
@@ -43,14 +43,19 @@ Example structure:
 }
 ```
 
-Create new file `.env` or `.env.vscode` if it does not exist in root of the workspace containing `graphql.config.experimental.json`, add values that will be replaced in `graphql.config.experimental.json`, putting this files inside `./metadata/` is also supported, to support "code as metadata" structure in Hlambda.
+Create new file `graphql.config.experimental.json` in root of the workspace.
+Then add `.env` or `.env.vscode` to the same workspace, add values that will be replaced in `graphql.config.experimental.json`. Putting this files inside `./metadata/` is also supported, to support "code as metadata" structure for Hlambda projects.
 
-Example:
+Example structure of `.env` file:
 
 ```bash
-# This values will be used in graphql.config.experimental.json
-ADMIN_DASHBOARD_GRAPHQL_API_INTROSPECTION_URL="https://localhost:8080/v1/graphql"
-ADMIN_DASHBOARD_GRAPHQL_API_INTROSPECTION_HASURA_ADMIN_SECRET="__my-local-development-password__"
+# Note; you can use any env variable name you like. In the file: graphql-lsp-web.config.experimental.json
+# by using this syntax: "{{MY_CUSTOM_VAR_NAME}}""
+
+MY_GRAPHQL_API_INTROSPECTION_URL="http://localhost:8080/v1/graphql"
+MY_GRAPHQL_API_INTROSPECTION_HASURA_ADMIN_SECRET="__my-local-development-password__"
+#MY_GRAPHQL_API_INTROSPECTION_AUTHORIZATION_HEADER_VALUE=""
+
 ```
 
 Add or remove headers based on your API type (Hasura, Apollo Server, Prisma, something custom, etc.), you can setup **custom headers per project**.

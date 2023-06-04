@@ -51,8 +51,8 @@ export async function activate(context: ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "graphql-language-service-server-web.load-configs",
-      async () => {
-        return await loadGraphQLProjectConfigs();
+      async (isFirstStartup = false) => {
+        return await loadGraphQLProjectConfigs(isFirstStartup);
       }
     )
   );
@@ -133,7 +133,8 @@ export async function activate(context: ExtensionContext) {
   // Try to load configs without any user interaction. (In cases where you have 1 workspace and 1 project, or at least 1 default project and schema is downloaded)
   // Start!
   await vscode.commands.executeCommand(
-    "graphql-language-service-server-web.load-configs"
+    "graphql-language-service-server-web.load-configs",
+    true // It is a first startup initiated by the extension.
   );
   // --------------------------------------------------------------------------------
   // Add ability to execute queries.

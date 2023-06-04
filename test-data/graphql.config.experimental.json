@@ -1,0 +1,26 @@
+{
+    "projects": [
+        {
+            "name": "Hasura Test API - From Env",
+            "default": false,
+            "url": "{{MY_GRAPHQL_API_INTROSPECTION_URL}}",
+            "headers": {
+                "x-hasura-admin-secret": "{{MY_GRAPHQL_API_INTROSPECTION_HASURA_ADMIN_SECRET}}",
+                "Authorization": "Bearer ey..."
+            }
+        },
+        {
+            "name": "Hasura Test API",
+            "default": false,
+            "url": "http://localhost:38080/v1/graphql",
+            "headers": {
+                "x-hasura-admin-secret": "demo"
+            }
+        },
+        {
+            "name": "Offline GraphQL Schema Project 1",
+            "default": false,
+            "file": "offline-graphql-schema-project1.json"
+        }
+    ]
+}

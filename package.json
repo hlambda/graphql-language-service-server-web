@@ -1,0 +1,213 @@
+{
+	"name": "graphql-language-service-server-web",
+	"displayName": "GraphQL Hlambda",
+	"description": "A GraphQL language server in a web extension",
+	"version": "0.0.7",
+	"author": "Gordan Nekić",
+	"license": "MIT",
+	"publisher": "hlambda",
+	"publisherDisplayName": "Cyberpunk d.o.o. | Hyper Lambda Project",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hlambda/graphql-language-service-server-web"
+	},
+	"homepage": "https://github.com/hlambda/graphql-language-service-server-web/tree/main#readme",
+	"bugs": {
+		"url": "https://github.com/hlambda/graphql-language-service-server-web/issues?q=issue+label:lsp-server"
+	},
+	"keywords": [
+		"multi-root ready"
+	],
+	"engines": {
+		"vscode": "^1.43.0"
+	},
+	"activationEvents": [
+		"onLanguage:javascript"
+	],
+	"icon": "assets/images/logo.png",
+	"contributors": [
+		{
+			"name": "Gordan Nekić",
+			"url": "https://gnekich.github.io/"
+		},
+		{
+			"name": "Rikki Schulte",
+			"url": "https://github.com/acao"
+		},
+		{
+			"name": "Divyendu Singh",
+			"url": "https://www.divyendusingh.com/"
+		},
+		{
+			"name": "GraphQL Contributors"
+		}
+	],
+	"galleryBanner": {
+		"color": "#032539",
+		"theme": "dark"
+	},
+	"categories": [
+		"Programming Languages",
+		"Language Packs"
+	],
+	"browser": "./client/dist/browserClientMain",
+	"contributes": {
+		"commands": [
+			{
+				"command": "graphql-language-service-server-web.load-configs",
+				"title": "GraphQL Hlambda: Select GraphQL Project"
+			},
+			{
+				"command": "graphql-language-service-server-web.fetch-remote-graphql-schema-from-selected-project-save-offline-backup",
+				"title": "GraphQL Hlambda: Backup remote GraphQL schema form API URL"
+			}
+		],
+		"configuration": [
+			{
+				"order": 22,
+				"id": "graphql-language-service-server-web",
+				"title": "graphql-language-service-server-web",
+				"properties": {
+					"graphql-language-service-server-web.trace.server": {
+						"type": "string",
+						"scope": "window",
+						"enum": [
+							"off",
+							"messages",
+							"verbose"
+						],
+						"default": "verbose",
+						"description": "Traces the communication between VS Code and the graphql-language-service-server-web language server."
+					}
+				}
+			}
+		],
+		"languages": [
+			{
+				"id": "graphql",
+				"extensions": [
+					".gql",
+					".graphql",
+					".graphqls"
+				],
+				"aliases": [
+					"GraphQL",
+					"graphql"
+				],
+				"configuration": "./language/language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "graphql",
+				"path": "./grammars/graphql.json",
+				"scopeName": "source.graphql"
+			},
+			{
+				"injectTo": [
+					"source.js",
+					"source.ts",
+					"source.js.jsx",
+					"source.tsx",
+					"source.vue",
+					"source.svelte"
+				],
+				"scopeName": "inline.graphql",
+				"path": "./grammars/graphql.js.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			},
+			{
+				"injectTo": [
+					"source.reason",
+					"source.ocaml"
+				],
+				"scopeName": "inline.graphql.re",
+				"path": "./grammars/graphql.re.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			},
+			{
+				"injectTo": [
+					"source.rescript"
+				],
+				"scopeName": "inline.graphql.res",
+				"path": "./grammars/graphql.rescript.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			},
+			{
+				"injectTo": [
+					"text.html.markdown"
+				],
+				"scopeName": "markdown.graphql.codeblock",
+				"path": "./grammars/graphql.markdown.codeblock.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			},
+			{
+				"injectTo": [
+					"source.python"
+				],
+				"scopeName": "inline.graphql.python",
+				"path": "./grammars/graphql.python.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			},
+			{
+				"injectTo": [
+					"text.html.php"
+				],
+				"scopeName": "inline.graphql.php",
+				"path": "./grammars/graphql.php.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			},
+			{
+				"injectTo": [
+					"source.scala"
+				],
+				"scopeName": "inline.graphql.scala",
+				"path": "./grammars/graphql.scala.json",
+				"embeddedLanguages": {
+					"meta.embedded.block.graphql": "graphql"
+				}
+			}
+		]
+	},
+	"scripts": {
+		"vsce:package": "vsce package",
+		"vsce:prepublish": "npm run vsce:package",
+		"vsce:publish": "vsce publish",
+		"open-vsx:publish": "ovsx publish",
+		"release": "npm run vsce:publish && npm run open-vsx:publish",
+		"vscode:prepublish": "npm run compile",
+		"compile": "webpack",
+		"watch": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"lint": "eslint ./client/src ./server/src --ext .ts,.tsx",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"chrome": "npm run compile && vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ./test-data"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^5.42.0",
+		"@typescript-eslint/parser": "^5.42.0",
+		"@vscode/test-web": "^0.0.22",
+		"eslint": "^8.26.0",
+		"path-browserify": "^1.0.1",
+		"prettier": "^2.8.8",
+		"ts-loader": "^9.3.0",
+		"typescript": "^5.0.2",
+		"webpack": "^5.44.0",
+		"webpack-cli": "^4.7.2"
+	},
+	"dependencies": {
+		"dotenv": "^16.1.3"
+	}
+}

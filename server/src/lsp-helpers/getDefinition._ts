@@ -1,0 +1,234 @@
+import {
+  DocumentNode,
+  FragmentSpreadNode,
+  FragmentDefinitionNode,
+  TypeDefinitionNode,
+  NamedTypeNode,
+  ValidationRule,
+  FieldNode,
+  GraphQLError,
+  Kind,
+  parse,
+  print,
+  isTypeDefinitionNode,
+} from "graphql";
+
+import {
+  CompletionItem,
+  Diagnostic,
+  Uri,
+  IPosition,
+  Outline,
+  OutlineTree,
+  GraphQLCache,
+  getAutocompleteSuggestions,
+  getHoverInformation,
+  HoverConfig,
+  validateQuery,
+  getRange,
+  DIAGNOSTIC_SEVERITY,
+  getOutline,
+  getDefinitionQueryResultForFragmentSpread,
+  getDefinitionQueryResultForDefinitionNode,
+  getDefinitionQueryResultForNamedType,
+  getDefinitionQueryResultForField,
+  DefinitionQueryResult,
+  getASTNodeAtPosition,
+  getTokenAtPosition,
+  getTypeInfo,
+  GraphQLConfig,
+  GraphQLProjectConfig,
+} from "graphql-language-service";
+
+import {
+  Hover,
+  SymbolInformation,
+  SymbolKind,
+} from "vscode-languageserver-types";
+
+const KIND_TO_SYMBOL_KIND: { [key: string]: SymbolKind } = {
+  [Kind.FIELD]: SymbolKind.Field,
+  [Kind.OPERATION_DEFINITION]: SymbolKind.Class,
+  [Kind.FRAGMENT_DEFINITION]: SymbolKind.Class,
+  [Kind.FRAGMENT_SPREAD]: SymbolKind.Struct,
+  [Kind.OBJECT_TYPE_DEFINITION]: SymbolKind.Class,
+  [Kind.ENUM_TYPE_DEFINITION]: SymbolKind.Enum,
+  [Kind.ENUM_VALUE_DEFINITION]: SymbolKind.EnumMember,
+  [Kind.INPUT_OBJECT_TYPE_DEFINITION]: SymbolKind.Class,
+  [Kind.INPUT_VALUE_DEFINITION]: SymbolKind.Field,
+  [Kind.FIELD_DEFINITION]: SymbolKind.Field,
+  [Kind.INTERFACE_TYPE_DEFINITION]: SymbolKind.Interface,
+  [Kind.DOCUMENT]: SymbolKind.File,
+  // novel, for symbols only
+  FieldWithArguments: SymbolKind.Method,
+};
+
+const _getDefinitionForNamedType = (
+  query: string,
+  ast: DocumentNode,
+  node: NamedTypeNode,
+  filePath: Uri,
+  projectConfig: GraphQLProjectConfig
+): Promise<DefinitionQueryResult | null> => {
+  const objectTypeDefinitions =
+    await this._graphQLCache.getObjectTypeDefinitions(projectConfig);
+
+  const dependencies = await this._graphQLCache.getObjectTypeDependenciesForAST(
+    ast,
+    objectTypeDefinitions
+  );
+
+  const localOperationDefinitionInfos = ast.definitions
+    .filter(isTypeDefinitionNode)
+    .map((definition: TypeDefinitionNode) => ({
+      filePath,
+      content: query,
+      definition,
+    }));
+
+  const result = await getDefinitionQueryResultForNamedType(
+    query,
+    node,
+    dependencies.concat(localOperationDefinitionInfos)
+  );
+
+  return result;
+};
+
+const _getDefinitionForField = async (
+  query: string,
+  _ast: DocumentNode,
+  _node: FieldNode,
+  _filePath: Uri,
+  projectConfig: GraphQLProjectConfig,
+  position: IPosition
+) => {
+  const token = getTokenAtPosition(query, position);
+  const schema = await this._graphQLCache.getSchema(projectConfig.name);
+
+  const typeInfo = getTypeInfo(schema!, token.state);
+  const fieldName = typeInfo.fieldDef?.name;
+
+  if (typeInfo && fieldName) {
+    const parentTypeName = (typeInfo.parentType as any).toString();
+
+    const objectTypeDefinitions =
+      await this._graphQLCache.getObjectTypeDefinitions(projectConfig);
+
+    // TODO: need something like getObjectTypeDependenciesForAST?
+    const dependencies = [...objectTypeDefinitions.values()];
+
+    const result = await getDefinitionQueryResultForField(
+      fieldName,
+      parentTypeName,
+      dependencies
+    );
+
+    return result;
+  }
+
+  return null;
+};
+
+const _getDefinitionForFragmentSpread = async (
+  query: string,
+  ast: DocumentNode,
+  node: FragmentSpreadNode,
+  filePath: Uri,
+  projectConfig: GraphQLProjectConfig
+): Promise<DefinitionQueryResult | null> => {
+  const fragmentDefinitions = await this._graphQLCache.getFragmentDefinitions(
+    projectConfig
+  );
+
+  const dependencies = await this._graphQLCache.getFragmentDependenciesForAST(
+    ast,
+    fragmentDefinitions
+  );
+
+  const localFragDefinitions = ast.definitions.filter(
+    (definition) => definition.kind === Kind.FRAGMENT_DEFINITION
+  );
+
+  const typeCastedDefs =
+    localFragDefinitions as any as Array<FragmentDefinitionNode>;
+
+  const localFragInfos = typeCastedDefs.map(
+    (definition: FragmentDefinitionNode) => ({
+      filePath,
+      content: query,
+      definition,
+    })
+  );
+
+  const result = await getDefinitionQueryResultForFragmentSpread(
+    query,
+    node,
+    dependencies.concat(localFragInfos)
+  );
+
+  return result;
+};
+const getOutlineAsync = async (
+  documentText: string
+): Promise<Outline | null> => {
+  return getOutline(documentText);
+};
+
+export const getDefinition = async (
+  query: string,
+  position: IPosition,
+  filePath: Uri
+): Promise<DefinitionQueryResult | null> => {
+  // const projectConfig = this.getConfigForURI(filePath);
+  // if (!projectConfig) {
+  //   return null;
+  // }
+
+  const projectConfig: any = {};
+
+  let ast;
+  try {
+    ast = parse(query);
+  } catch {
+    return null;
+  }
+
+  const node = getASTNodeAtPosition(query, ast, position);
+  if (node) {
+    switch (node.kind) {
+      case Kind.FRAGMENT_SPREAD:
+        return _getDefinitionForFragmentSpread(
+          query,
+          ast,
+          node,
+          filePath,
+          projectConfig
+        );
+
+      case Kind.FRAGMENT_DEFINITION:
+      case Kind.OPERATION_DEFINITION:
+        return getDefinitionQueryResultForDefinitionNode(filePath, query, node);
+
+      case Kind.NAMED_TYPE:
+        return _getDefinitionForNamedType(
+          query,
+          ast,
+          node,
+          filePath,
+          projectConfig
+        );
+
+      case Kind.FIELD:
+        return _getDefinitionForField(
+          query,
+          ast,
+          node,
+          filePath,
+          projectConfig,
+          position
+        );
+    }
+  }
+  return null;
+};

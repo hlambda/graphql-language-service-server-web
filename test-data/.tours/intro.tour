@@ -1,0 +1,22 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Intro",
+  "steps": [
+    {
+      "title": "Introduction - graphql.config.experimental.json",
+      "file": "graphql.config.experimental.json",
+      "description": "This is example of a Project in GraphQl experimental config used by this extension.",
+      "line": 22
+    },
+    {
+      "file": "graphql.config.experimental.json",
+      "description": "You can reference values by using {{<INSERT YOUR ENV VARIABLE NAME>}} that will be replaced by values found in .env file of the root workspace.",
+      "line": 17
+    },
+    {
+      "file": ".env.example",
+      "description": "Here is the example of the value used in config file.",
+      "line": 4
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+	"name": "graphql-language-service-server-web-server",
+	"description": "Implementation of a GraphQL language server in a web extension.",
+	"version": "1.0.0",
+	"author": "Gordan Nekić",
+	"license": "MIT",
+	"engines": {
+		"node": "*"
+	},
+	"dependencies": {
+		"@babel/parser": "^7.21.2",
+		"@babel/types": "^7.21.2",
+		"@vue/compiler-sfc": "^3.3.4",
+		"graphql-config": "^5.0.1",
+		"graphql-language-service": "^5.1.6",
+		"path-browserify": "^1.0.1",
+		"vscode-languageserver": "^7.0.0",
+		"vscode-languageserver-textdocument": "^1.0.1"
+	},
+	"scripts": {},
+	"devDependencies": {
+		"@types/path-browserify": "^1.0.0"
+	}
+}

@@ -7,6 +7,8 @@ To address the original [issue](https://github.com/graphql/graphiql/issues/2112)
 
 Important to note: This is not the official extension by [GraphQL Foundation](https://graphql.org/foundation/) and it is maintained by [Hlambda](https://www.hlambda.io/). To sponsor the work please reach out to [Hlambda](https://www.hlambda.io/) developers.
 
+[<img src="https://raw.githubusercontent.com/hlambda/graphql-language-service-server-web/main/examples/screenshots/preview.gif" />](https://raw.githubusercontent.com/hlambda/graphql-language-service-server-web/main/examples/screenshots/preview.webm)
+
 ## Mission
 
 - Create GraphQL LSP Server that can be transpiled for webworker.
@@ -65,7 +67,7 @@ This way you can test your API as a **different role**, just create multiple pro
 
 Here we list most common issues you may have:
 
-- You can have issue with the CORS or invalid TLS certificates, because this extension is built to be run for in web version of IDE it has to respect browser security standards thus we can't establish connections to remote that does not support CORS or has invalid security cert.
+- You can have issue with the CORS or invalid TLS certificates, because this extension is built to be run in web version of IDE it has to respect browser security standards thus we can't establish connections to remote that does not support CORS or has invalid security cert.
 
 We suggest two approaches;
 

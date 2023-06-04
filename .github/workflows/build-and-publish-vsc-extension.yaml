@@ -1,0 +1,23 @@
+name: Publish vsc extension to marketplace
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+          registry-url: "https://registry.npmjs.org"
+      - run: npm install -g @vscode/vsce
+      - run: vsce --version
+      - run: npm install
+      - run: |
+          echo "::add-mask::$VSCE_TOKEN"
+          vsce publish
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}

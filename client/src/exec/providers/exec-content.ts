@@ -56,17 +56,23 @@ export class GraphQLContentProvider implements TextDocumentContentProvider {
     for await (const node of variableDefinitionNodes) {
       const variableType =
         this.sourceHelper.getTypeForVariableDefinitionNode(node);
+
+      // By using escape input to typeCast will be undefined, if undefined we should not provide variable in request.
+      const providedByUser = await window.showInputBox({
+        ignoreFocusOut: true,
+        placeHolder: `Please enter the value for "${node.variable.name.value}" of type "${variableType}", press escape to skip sending variable (provide defaults from the query).`,
+        validateInput: async (value: string) =>
+          this.sourceHelper.validate(value, variableType),
+      });
+
+      const typeCasted =
+        typeof providedByUser === "undefined"
+          ? undefined
+          : this.sourceHelper.typeCast(providedByUser as string, variableType);
+
       variables = {
         ...variables,
-        [`${node.variable.name.value}`]: this.sourceHelper.typeCast(
-          (await window.showInputBox({
-            ignoreFocusOut: true,
-            placeHolder: `Please enter the value for ${node.variable.name.value}`,
-            validateInput: async (value: string) =>
-              this.sourceHelper.validate(value, variableType),
-          })) as string,
-          variableType
-        ),
+        [`${node.variable.name.value}`]: typeCasted,
       };
     }
     return variables;

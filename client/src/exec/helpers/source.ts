@@ -56,7 +56,11 @@ export class SourceHelper {
     try {
       switch (type) {
         case "Int":
-          if (parseInt(value, 10)) {
+          if (
+            typeof parseInt(value, 10) === "number" &&
+            Number.isInteger(parseInt(value, 10)) &&
+            !Number.isNaN(parseInt(value, 10))
+          ) {
             return null;
           }
           break;

@@ -18,6 +18,6 @@ jobs:
       - run: npm install
       - run: |
           echo "::add-mask::$VSCE_TOKEN"
-          vsce publish
+          vsce publish -p $VSCE_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}

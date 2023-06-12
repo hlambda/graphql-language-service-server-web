@@ -1,11 +1,32 @@
 # GraphQL LSP for Web (vscode.dev, github.dev) & vscode
 
-It is based on [LSP web extension example from Microsoft](https://github.com/microsoft/vscode-extension-samples/tree/main/lsp-web-extension-sample) and [graphiql/graphql-language-service-server](https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-server)
+<span>
+  <a href="https://marketplace.visualstudio.com/items?itemName=hlambda.graphql-language-service-server-web" title="Visual Studio Marketplace Download">
+    <img alt="Visual Studio Marketplace Download" src="https://img.shields.io/badge/Visual%20Studio%20Marketplace-Download-e2165e?logo=visual-studio-code&style=for-the-badge" />
+  </a>
+</span>
+<span>
+  <a href="https://github.com/hlambda/graphql-language-service-server-web/releases" title="GitHub release (latest SemVer)">
+    <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/hlambda/graphql-language-service-server-web?style=for-the-badge">
+  </a>
+</span>
+<span>
+  <a href="https://github.com/sponsors/gnekich" title="Sponsor">
+    <img src="https://img.shields.io/badge/Sponsor-d758b3?logo=github&style=for-the-badge" alt="Sponsor" />
+  </a>
+</span>
+<span>
+  <a href="https://www.patreon.com/bePatron?u=70751523" title="Donate to this project using Patreon">
+    <img src="https://img.shields.io/badge/patreon-donate-green.svg?style=for-the-badge" alt="Patreon donate button" />
+  </a>
+</span>
+
+This extension is based on [LSP web extension example from Microsoft](https://github.com/microsoft/vscode-extension-samples/tree/main/lsp-web-extension-sample) and [graphiql/graphql-language-service-server](https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-server)
 It combines multiple useful packages by the [GraphQL Foundation](https://github.com/graphql/graphiql) and ports them to the vscode web.
 
 To address the original [issue](https://github.com/graphql/graphiql/issues/2112) to port GraphQL LSP to web this extension needed to do some radical changes, like dropping the support for `graphql-config` configuration files. Because the latest version of `graphql-config` package is not designed to run in webworker (it relays on using FS). This is why it is published under different publisher [Hlambda](https://www.hlambda.io/).
 
-Important to note: This is not the official extension by [GraphQL Foundation](https://graphql.org/foundation/) and it is maintained by [Hlambda](https://www.hlambda.io/). To sponsor the work please reach out to [Hlambda](https://www.hlambda.io/) developers.
+Important to note: **This is not the official extension by [GraphQL Foundation](https://graphql.org/foundation/)** and it is maintained by [Hlambda](https://www.hlambda.io/). To sponsor the work please reach out to [Hlambda](https://www.hlambda.io/) developers.
 
 [<img src="https://raw.githubusercontent.com/hlambda/graphql-language-service-server-web/main/examples/screenshots/preview.gif" />](https://raw.githubusercontent.com/hlambda/graphql-language-service-server-web/main/examples/screenshots/preview.webm)
 
@@ -20,6 +41,12 @@ Important to note: This is not the official extension by [GraphQL Foundation](ht
 - GraphQL syntax highlighting
 - **GraphQL LSP server compatible with Web IDE**
 - **Get GraphQL Query/Mutation/Subscription execution results, compatible with Web IDE**
+
+## Installing
+
+You can easily test the extension in your browser by opening [vscode.dev](https://vscode.dev/) and searching for the extension
+
+[<img src="https://raw.githubusercontent.com/hlambda/graphql-language-service-server-web/main/examples/screenshots/download-vsc-marketplace.png" />](https://marketplace.visualstudio.com/items?itemName=hlambda.graphql-language-service-server-web)
 
 ## Running
 

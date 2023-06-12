@@ -2,7 +2,7 @@
 	"name": "graphql-language-service-server-web",
 	"displayName": "GraphQL Hlambda",
 	"description": "A GraphQL language server in a web extension",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"author": "Gordan Nekić",
 	"license": "MIT",
 	"publisher": "hlambda",

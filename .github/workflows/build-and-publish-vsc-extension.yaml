@@ -1,8 +1,11 @@
 name: Publish vsc extension to marketplace
 on:
-  push:
-    branches:
-      - "main"
+  release:
+    types: [published]
+# on:
+#   push:
+#     branches:
+#       - "main"
 jobs:
   build:
     runs-on: ubuntu-latest
